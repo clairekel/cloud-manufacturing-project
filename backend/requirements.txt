@@ -1,0 +1,6 @@
+Flask==2.0.1
+flask-cors
+Werkzeug==2.0.1
+google-cloud-firestore==2.3.4
+functions-framework==3.*
+gunicorn
