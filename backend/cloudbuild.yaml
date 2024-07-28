@@ -4,6 +4,7 @@ steps:
     args:
       - '-c'
       - |
+        export PROJECT_ID="cloud-based-manufacturing"
         echo "PROJECT_ID: $PROJECT_ID"
         echo "All environment variables:"
         env
@@ -27,14 +28,12 @@ steps:
             print(f'Error accessing secret: {e}')
         "
         python test.py
-    secretEnv: ['PROJECT_ID', 'SECRET_ID']
+    secretEnv: ['SECRET_ID']
 
 availableSecrets:
   secretManager:
-  - versionName: projects/cloud-based-manufacturing/secrets/project_id/versions/latest
-    env: 'PROJECT_ID'
   - versionName: projects/cloud-based-manufacturing/secrets/secret_id/versions/latest
     env: 'SECRET_ID'
-    
+
 options:
   logging: CLOUD_LOGGING_ONLY

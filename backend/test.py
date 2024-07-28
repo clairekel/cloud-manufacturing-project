@@ -11,7 +11,10 @@ from dotenv import load_dotenv
 
 load_dotenv(override=False)
 
-print("Environment variables:")
+import os
+from google.cloud import secretmanager
+
+print("Environment variables in test.py:")
 for key, value in os.environ.items():
     print(f"{key}: {value}")
 
@@ -21,12 +24,15 @@ secret_id = os.environ.get('SECRET_ID')
 print(f"PROJECT_ID: {project_id}")
 print(f"SECRET_ID: {secret_id}")
 
-def access_secret(project_id, secret_id, version_id="latest"):
+try:
     client = secretmanager.SecretManagerServiceClient()
-    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
     response = client.access_secret_version(request={"name": name})
-    payload = response.payload.data.decode('UTF-8')
-    return payload
+    print(f"Successfully accessed secret: {secret_id}")
+except Exception as e:
+    print(f"Error accessing secret: {e}")
+
+# Rest of your test code...
 
 # Retrieve the secret from Secret Manager
 secret_value = access_secret(project_id, secret_id)
