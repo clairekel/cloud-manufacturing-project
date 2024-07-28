@@ -42,7 +42,7 @@
         async function checkProduct() {
             const productName = document.getElementById('productName').value;
             try {
-                const response = await fetch('https://cloud-manufacturing-backend-eoqx4ajhuq-nw.a.run.app/check_product', {
+                const response = await fetch('http://localhost:5000/check_product', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

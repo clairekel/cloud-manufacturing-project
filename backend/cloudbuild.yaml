@@ -1,0 +1,17 @@
+steps:
+- name: 'python:3.9'
+  entrypoint: pip
+  args: ['install', '-r', 'requirements.txt']
+
+- name: 'python:3.9'
+  entrypoint: python
+  args: ['-m', 'pytest', 'tests/']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/cloud-based-manufacturing/cloud-manufacturing', '.']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/cloud-based-manufacturing/cloud-manufacturing']
+
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['run', 'deploy', 'cloud-manufacturing', '--image', 'gcr.io/cloud-based-manufacturing/cloud-manufacturing', '--region', 'europe-west2', '--platform', 'managed', '--allow-unauthenticated']
