@@ -28,16 +28,12 @@ steps:
       exit 1
     fi
     # Run tests
-    if [ -d "tests" ]; then
-      pytest tests/
+    if [ -f "test.py" ]; then
+      pytest test.py
     else
-      echo "Tests directory not found."
+      echo "Test file not found."
       exit 1
     fi
-
-- name: 'python:3.9'
-  entrypoint: python
-  args: ['-m', 'pytest', 'tests/']
 
 options:
   logging: CLOUD_LOGGING_ONLY
