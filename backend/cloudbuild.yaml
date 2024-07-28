@@ -11,7 +11,7 @@ steps:
         
         # Access the Firestore credentials from Secret Manager
          echo "Accessing Firestore credentials..."
-        gcloud secrets versions access latest --secret=projects/970617304871/secrets/firestore-credentials > /tmp/firestore-credentials.json
+         gcloud secrets versions access latest --secret=firestore-secret > /tmp/firestore-credentials.json
         
         # Set the credentials for use in tests
         export GOOGLE_APPLICATION_CREDENTIALS=/tmp/firestore-credentials.json
