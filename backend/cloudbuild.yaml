@@ -16,3 +16,6 @@ availableSecrets:
     env: 'PROJECT_ID'
   - versionName: projects/$PROJECT_ID/secrets/secret_id/versions/latest
     env: 'SECRET_ID'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
