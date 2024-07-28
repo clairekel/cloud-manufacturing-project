@@ -8,7 +8,7 @@ steps:
     . /tmp/venv/bin/activate
     cd backend
     pip install -r requirements.txt
-    pytest tests/
+    pytest backend/tests/
 
 - name: 'python:3.9'
   entrypoint: python
