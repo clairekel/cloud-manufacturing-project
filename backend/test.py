@@ -5,11 +5,9 @@ from unittest.mock import patch, MagicMock
 from app import app
 from google.cloud import firestore
 from google.api_core import exceptions as firestore_exceptions
-from google.oauth2 import service_account
+from google.oauth2.service_account import Credentials
 from google.cloud import secretmanager
 
-# Ensure we're in the testing environment
-os.environ['FLASK_ENV'] = 'testing'
 def access_secret(project_id, secret_id, version_id="latest"):
     client = secretmanager.SecretManagerServiceClient()
     name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
@@ -25,11 +23,11 @@ secret_id = "firestore-secret"
 secret_value = access_secret(project_id, secret_id)
 
 # Parse the secret value (assuming it's a JSON string)
-credentials = json.loads(secret_value)
+# Parse the secret and create credentials
+credentials = Credentials.from_service_account_info(json.loads(secret_value))
 
 # Use the credentials as needed
 # For example, to create a Firestore client:
-from google.cloud import firestore
 db = firestore.Client(credentials=credentials)
 
 class TestCloudManufacturing(unittest.TestCase):
