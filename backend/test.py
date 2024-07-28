@@ -6,29 +6,33 @@ from app import app
 from google.cloud import firestore
 from google.api_core import exceptions as firestore_exceptions
 from google.oauth2 import service_account
+from google.cloud import secretmanager
 
 # Ensure we're in the testing environment
 os.environ['FLASK_ENV'] = 'testing'
+def access_secret(project_id, secret_id, version_id="latest"):
+    client = secretmanager.SecretManagerServiceClient()
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+    response = client.access_secret_version(request={"name": name})
+    payload = response.payload.data.decode('UTF-8')
+    return payload
+
+# Replace with your project ID and secret ID
+project_id = "cloud-based-manufacturing"
+secret_id = "firestore-secret"
+
+# Retrieve the secret from Secret Manager
+secret_value = access_secret(project_id, secret_id)
+
+# Parse the secret value (assuming it's a JSON string)
+credentials = json.loads(secret_value)
+
+# Use the credentials as needed
+# For example, to create a Firestore client:
+from google.cloud import firestore
+db = firestore.Client(credentials=credentials)
 
 class TestCloudManufacturing(unittest.TestCase):
-
-    @classmethod
-    def setUpClass(cls):
-        # Path to the credentials file in Cloud Build
-        credentials_path = '/tmp/firestore-secret.json'
-        
-        if not os.path.exists(credentials_path):
-            raise Exception(f"Credentials file not found at {credentials_path}")
-        
-        # Load the credentials
-        with open(credentials_path, 'r') as f:
-            creds_info = json.load(f)
-        
-        # Create credentials object
-        credentials = service_account.Credentials.from_service_account_info(creds_info)
-        
-        # Initialize Firestore client
-        cls.db = firestore.Client(credentials=credentials, project=creds_info['project_id'])
 
     def setUp(self):
         self.app = app.test_client()
