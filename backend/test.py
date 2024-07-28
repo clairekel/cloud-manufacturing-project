@@ -14,7 +14,7 @@ class TestCloudManufacturing(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Replace with your test project ID
-        cls.db = firestore.Client(project='cloud-based-manufacturing')
+        cls.db = firestore.Client()
 
     def setUp(self):
         self.app = app.test_client()
@@ -109,7 +109,7 @@ class TestCloudManufacturing(unittest.TestCase):
         data = response.get_json()
         self.assertIn('error', data)
         self.assertEqual(data['error'], 'Database error')
-        
+
     def tearDown(self):
         # Clean up any resources if necessary
         pass
