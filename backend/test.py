@@ -15,7 +15,7 @@ class TestCloudManufacturing(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Path to the credentials file in Cloud Build
-        credentials_path = '/tmp/firestore-credentials.json'
+        credentials_path = '/tmp/firestore-secret.json'
         
         if not os.path.exists(credentials_path):
             raise Exception(f"Credentials file not found at {credentials_path}")
