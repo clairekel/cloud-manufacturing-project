@@ -5,6 +5,9 @@ steps:
       - '-c'
       - |
         echo "Project ID: $PROJECT_ID"
+        echo "CLOUD_BUILD_PROJECT_ID: $CLOUD_BUILD_PROJECT_ID"
+        echo "All environment variables:"
+        env
         cd backend
         pip install -r requirements.txt
         pip install python-dotenv google-cloud-secret-manager
