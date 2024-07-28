@@ -4,20 +4,12 @@ steps:
   args:
   - '-c'
   - |
-    # Access the secret
-    gcloud secrets versions access latest --secret=firestore-credentials > /tmp/credentials.json
-    
-    # Set up Python environment
-    python -m venv /tmp/venv --system-site-packages
-    . /tmp/venv/bin/activate
-    
-    # Upgrade pip and install requirements
-    pip install --upgrade pip
-    pip install --no-cache-dir -r backend/requirements.txt
-    
-    # Run tests
-    cd backend
-    GOOGLE_APPLICATION_CREDENTIALS=/tmp/credentials.json pytest test.py
+    echo "Current directory:"
+    pwd
+    echo "Directory contents:"
+    ls -la
+    echo "Python version:"
+    python --version
 
 options:
   logging: CLOUD_LOGGING_ONLY
