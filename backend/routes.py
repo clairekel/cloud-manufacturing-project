@@ -21,7 +21,10 @@ def check_product():
             if not request_json or 'ProductName' not in request_json:
                 return jsonify({'error': 'Invalid request'}), 400
 
-            product_name = request_json['ProductName'].lower()
+            product_name = request_json['ProductName'].strip().lower()
+            if not product_name:
+                return jsonify({'message': 'Product is not available'}), 200
+            
             print(f"Product name: {product_name}")
 
             try:
