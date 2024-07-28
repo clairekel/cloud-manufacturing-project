@@ -13,44 +13,40 @@ load_dotenv(override=False)
 
 print("Environment variables in test.py:")
 for key, value in os.environ.items():
-    print(f"{key}: {value}")
+    if key == 'FIRESTORE_SECRET':
+        print(f"{key}: [REDACTED]")
+    else:
+        print(f"{key}: {value}")
 
 project_id = os.environ.get('PROJECT_ID')
-secret_id = os.environ.get('SECRET_ID')
 firestore_secret = os.environ.get('FIRESTORE_SECRET')
 
 print(f"PROJECT_ID: {project_id}")
-print(f"SECRET_ID: {secret_id}")
-print(f"FIRESTORE_SECRET: {firestore_secret}")
+print(f"FIRESTORE_SECRET exists: {'Yes' if firestore_secret else 'No'}")
 
-def access_secret(project_id, secret_id, version_id="latest"):
-    client = secretmanager.SecretManagerServiceClient()
-    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
-    try:
-        response = client.access_secret_version(request={"name": name})
-        return response.payload.data.decode('UTF-8')
-    except Exception as e:
-        print(f"Error accessing secret: {e}")
-        return None
-
-# Use the firestore_secret directly, no need to access it again
 if firestore_secret:
     print("Successfully retrieved Firestore secret from environment")
+    try:
+        # Parse the JSON string into a dictionary
+        secret_info = json.loads(firestore_secret)
+        
+        # Create credentials from the parsed secret info
+        credentials = Credentials.from_service_account_info(secret_info)
+        
+        # Initialize Firestore client with the credentials
+        db = firestore.Client(credentials=credentials, project=project_id)
+        
+        print("Successfully initialized Firestore client")
+    except json.JSONDecodeError:
+        print("Error: FIRESTORE_SECRET is not a valid JSON string")
+    except Exception as e:
+        print(f"Error initializing Firestore client: {e}")
 else:
     print("Failed to retrieve Firestore secret from environment")
-
-# Parse the secret value (assuming it's a JSON string)
-# Parse the secret and create credentials
-credentials = Credentials.from_service_account_info(json.loads(secret_value))
-
-# Use the credentials as needed
-# For example, to create a Firestore client:
-db = firestore.Client(credentials=credentials)
 
 class TestCloudManufacturing(unittest.TestCase):
 
     def setUp(self):
-        load_dotenv()  # This loads the variables from .env
         self.app = app.test_client()
         self.app.testing = True
 

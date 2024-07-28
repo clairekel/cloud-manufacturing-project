@@ -5,12 +5,13 @@ steps:
       - '-c'
       - |
         echo "PROJECT_ID: $PROJECT_ID"
-        echo "All environment variables:"
-        env
+        echo "FIRESTORE_SECRET exists: $([[ -n "$FIRESTORE_SECRET" ]] && echo 'Yes' || echo 'No')"
         cd backend
         pip install -r requirements.txt
-        pip install python-dotenv google-cloud-secret-manager
+        pip install google-cloud-firestore google-cloud-secret-manager python-dotenv
         python test.py
+    env:
+      - 'PROJECT_ID=$PROJECT_ID'
     secretEnv: ['FIRESTORE_SECRET']
 
 availableSecrets:
