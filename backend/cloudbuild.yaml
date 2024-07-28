@@ -4,7 +4,7 @@ steps:
   args:
   - '-c'
   - |
-    echo $FIRESTORE_CREDENTIALS > /tmp/credentials.json
+    gcloud secrets versions access latest --secret=firestore-credentials > /tmp/credentials.json
     python -m venv /tmp/venv
     . /tmp/venv/bin/activate
     cd backend
