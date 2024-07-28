@@ -1,15 +1,8 @@
 steps:
-- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+- name: 'python:3.9'
   entrypoint: 'bash'
   args:
   - '-c'
   - |
-    echo "Current directory:"
-    pwd
-    echo "Directory contents:"
-    ls -la
-    echo "Python version:"
-    python --version
-
-options:
-  logging: CLOUD_LOGGING_ONLY
+    pip install -r requirements.txt
+    pytest
