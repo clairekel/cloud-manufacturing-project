@@ -4,20 +4,22 @@ steps:
     args:
       - '-c'
       - |
-        # Access the secret
-        echo "Accessing Firestore credentials..."
-        gcloud secrets versions access latest --secret=firestore-secret > /tmp/firestore-credentials.json
-
         # Navigate to the backend directory
         cd backend
 
         # Install dependencies
         echo "Installing dependencies..."
         pip install -r requirements.txt
+        pip install python-dotenv
+
+        # Set up environment for testing
+        export CI=true
 
         # Run tests
         echo "Running tests..."
-        python -m pytest test.py -v
+        python test.py
+
+    secretEnv: ['PROJECT_ID', 'SECRET_ID']
 
 # Set the timeout for the build (optional)
 timeout: '1800s'
@@ -25,3 +27,10 @@ timeout: '1800s'
 # Use Cloud Logging
 options:
   logging: CLOUD_LOGGING_ONLY
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/$PROJECT_ID/secrets/project_id/versions/latest
+    env: 'PROJECT_ID'
+  - versionName: projects/$PROJECT_ID/secrets/secret_id/versions/latest
+    env: 'SECRET_ID'

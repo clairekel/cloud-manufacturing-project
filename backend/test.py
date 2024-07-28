@@ -7,6 +7,9 @@ from google.cloud import firestore
 from google.api_core import exceptions as firestore_exceptions
 from google.oauth2.service_account import Credentials
 from google.cloud import secretmanager
+from dotenv import load_dotenv
+
+load_dotenv() 
 
 def access_secret(project_id, secret_id, version_id="latest"):
     client = secretmanager.SecretManagerServiceClient()
@@ -15,9 +18,9 @@ def access_secret(project_id, secret_id, version_id="latest"):
     payload = response.payload.data.decode('UTF-8')
     return payload
 
-# Replace with your project ID and secret ID
-project_id = "cloud-based-manufacturing"
-secret_id = "firestore-secret"
+project_id = os.environ.get('PROJECT_ID')
+secret_id = os.environ.get('SECRET_ID')
+print(project_id, secret_id)
 
 # Retrieve the secret from Secret Manager
 secret_value = access_secret(project_id, secret_id)
@@ -33,6 +36,7 @@ db = firestore.Client(credentials=credentials)
 class TestCloudManufacturing(unittest.TestCase):
 
     def setUp(self):
+        load_dotenv()  # This loads the variables from .env
         self.app = app.test_client()
         self.app.testing = True
 
@@ -131,4 +135,13 @@ class TestCloudManufacturing(unittest.TestCase):
         pass
 
 if __name__ == '__main__':
-    unittest.main()
+    if os.environ.get('CI'):
+        # We're in CI, environment should be set up by Cloud Build
+        pass
+    else:
+        # We're local, load from .env file
+        from dotenv import load_dotenv
+        load_dotenv()
+
+    # Run the tests
+    unittest.main(module='test')
