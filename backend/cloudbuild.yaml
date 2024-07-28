@@ -4,15 +4,40 @@ steps:
   args:
   - '-c'
   - |
+    # Print the directory structure for debugging
+    echo "Current directory structure:"
+    ls -R
+    # Ensure the backend directory exists
+    if [ -d "backend" ]; then
+      cd backend
+    else
+      echo "Backend directory not found."
+      exit 1
+    fi
+    # Print the backend directory structure for debugging
+    echo "Backend directory structure:"
+    ls -R
+    # Set up virtual environment
     python -m venv /tmp/venv
     . /tmp/venv/bin/activate
-    cd backend
-    pip install -r requirements.txt
-    pytest backend/tests/
+    # Install requirements
+    if [ -f "requirements.txt" ]; then
+      pip install -r requirements.txt
+    else
+      echo "requirements.txt not found."
+      exit 1
+    fi
+    # Run tests
+    if [ -d "tests" ]; then
+      pytest tests/
+    else
+      echo "Tests directory not found."
+      exit 1
+    fi
 
 - name: 'python:3.9'
   entrypoint: python
-  args: ['-m', 'pytest', 'backend/tests/']
+  args: ['-m', 'pytest', 'tests/']
 
 options:
   logging: CLOUD_LOGGING_ONLY
