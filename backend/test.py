@@ -4,6 +4,7 @@ from unittest.mock import patch, MagicMock
 from app import app
 from google.cloud import firestore
 from google.api_core import exceptions as firestore_exceptions
+from google.oauth2 import service_account
 
 # Ensure we're in the testing environment
 os.environ['FLASK_ENV'] = 'testing'
@@ -14,7 +15,12 @@ class TestCloudManufacturing(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Replace with your test project ID
-        cls.db = firestore.Client()
+        credentials_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
+        if not credentials_path or not os.path.exists(credentials_path):
+            raise Exception(f"Credentials file not found at {credentials_path}")
+        
+        credentials = service_account.Credentials.from_service_account_file(credentials_path)
+        cls.db = firestore.Client(credentials=credentials)
 
     def setUp(self):
         self.app = app.test_client()

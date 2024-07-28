@@ -9,14 +9,7 @@ steps:
         curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add -
         apt-get update && apt-get install -y google-cloud-sdk
 
-        # Print Python version
-        python --version
-
-        # Print current project
-        echo "Current Project ID:"
-        gcloud config get-value project
-
-        # Access the secret (we'll skip listing all secrets)
+        # Access the secret
         echo "Accessing Firestore credentials..."
         gcloud secrets versions access latest --secret=firestore-secret > /tmp/firestore-credentials.json
 
@@ -32,7 +25,7 @@ steps:
 
         # Run tests
         echo "Running tests..."
-        python -m pytest test.py
+        python -m pytest test.py -v  # Added -v for verbose output
 
 # Set the timeout for the build (optional)
 timeout: '1800s'
