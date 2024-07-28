@@ -7,10 +7,11 @@ steps:
       - |
         # Print Python version for verification
         python --version
+        gcloud config set project cloud-based-manufacturing
         
         # Access the Firestore credentials from Secret Manager
-        echo "Accessing Firestore credentials..."
-        gcloud secrets versions access latest --secret=firestore-credentials > /tmp/firestore-credentials.json
+         echo "Accessing Firestore credentials..."
+        gcloud secrets versions access latest --secret=projects/970617304871/secrets/firestore-credentials > /tmp/firestore-credentials.json
         
         # Set the credentials for use in tests
         export GOOGLE_APPLICATION_CREDENTIALS=/tmp/firestore-credentials.json
