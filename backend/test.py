@@ -11,31 +11,33 @@ from dotenv import load_dotenv
 
 load_dotenv(override=False)
 
-import os
-from google.cloud import secretmanager
-
 print("Environment variables in test.py:")
 for key, value in os.environ.items():
     print(f"{key}: {value}")
 
 project_id = os.environ.get('PROJECT_ID')
 secret_id = os.environ.get('SECRET_ID')
+firestore_secret = os.environ.get('FIRESTORE_SECRET')
 
 print(f"PROJECT_ID: {project_id}")
 print(f"SECRET_ID: {secret_id}")
+print(f"FIRESTORE_SECRET: {firestore_secret}")
 
-try:
+def access_secret(project_id, secret_id, version_id="latest"):
     client = secretmanager.SecretManagerServiceClient()
-    name = f"projects/{project_id}/secrets/{secret_id}/versions/latest"
-    response = client.access_secret_version(request={"name": name})
-    print(f"Successfully accessed secret: {secret_id}")
-except Exception as e:
-    print(f"Error accessing secret: {e}")
+    name = f"projects/{project_id}/secrets/{secret_id}/versions/{version_id}"
+    try:
+        response = client.access_secret_version(request={"name": name})
+        return response.payload.data.decode('UTF-8')
+    except Exception as e:
+        print(f"Error accessing secret: {e}")
+        return None
 
-# Rest of your test code...
-
-# Retrieve the secret from Secret Manager
-secret_value = access_secret(project_id, secret_id)
+# Use the firestore_secret directly, no need to access it again
+if firestore_secret:
+    print("Successfully retrieved Firestore secret from environment")
+else:
+    print("Failed to retrieve Firestore secret from environment")
 
 # Parse the secret value (assuming it's a JSON string)
 # Parse the secret and create credentials

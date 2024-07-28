@@ -5,35 +5,21 @@ steps:
       - '-c'
       - |
         export PROJECT_ID="cloud-based-manufacturing"
+        export SECRET_ID="firestore-secret"
         echo "PROJECT_ID: $PROJECT_ID"
+        echo "SECRET_ID: $SECRET_ID"
         echo "All environment variables:"
         env
         cd backend
         pip install -r requirements.txt
         pip install python-dotenv google-cloud-secret-manager
-        python -c "
-        import os
-        print('Python environment variables:')
-        for key, value in os.environ.items():
-            print(f'{key}: {value}')
-        from google.cloud import secretmanager
-        client = secretmanager.SecretManagerServiceClient()
-        project_id = os.environ.get('PROJECT_ID')
-        print(f'Attempting to access secrets for project: {project_id}')
-        name = f'projects/{project_id}/secrets/project_id/versions/latest'
-        try:
-            response = client.access_secret_version(request={'name': name})
-            print('Successfully accessed secret')
-        except Exception as e:
-            print(f'Error accessing secret: {e}')
-        "
         python test.py
-    secretEnv: ['SECRET_ID']
+    secretEnv: ['FIRESTORE_SECRET']
 
 availableSecrets:
   secretManager:
-  - versionName: projects/cloud-based-manufacturing/secrets/secret_id/versions/latest
-    env: 'SECRET_ID'
+  - versionName: projects/cloud-based-manufacturing/secrets/firestore-secret/versions/latest
+    env: 'FIRESTORE_SECRET'
 
 options:
   logging: CLOUD_LOGGING_ONLY
