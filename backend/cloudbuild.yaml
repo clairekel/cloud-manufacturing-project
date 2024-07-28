@@ -1,18 +1,19 @@
 steps:
-- name: 'python:3.9'
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
   entrypoint: 'bash'
   args:
   - '-c'
   - |
+    echo "$FIRESTORE_CREDENTIALS" > /tmp/credentials.json
     python -m venv /tmp/venv
     . /tmp/venv/bin/activate
     cd backend
     pip install -r requirements.txt
-    pytest test.py
+    GOOGLE_APPLICATION_CREDENTIALS=/tmp/credentials.json pytest test.py
 
-- name: 'python:3.9'
-  entrypoint: python
-  args: ['-m', 'pytest', 'backend/test.py']
+secrets:
+- secretEnv:
+    FIRESTORE_CREDENTIALS: projects/cloud-based-manufacturing/secrets/FIRESTORE_CREDENTIALS/versions/latest
 
 options:
   logging: CLOUD_LOGGING_ONLY
