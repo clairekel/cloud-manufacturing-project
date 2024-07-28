@@ -4,30 +4,11 @@ steps:
     args:
       - '-c'
       - |
-        # Navigate to the backend directory
         cd backend
-
-        # Install dependencies
-        echo "Installing dependencies..."
         pip install -r requirements.txt
         pip install python-dotenv
-      
-
-        # Set up environment for testing
-        export CI=true
-
-        # Run tests
-        echo "Running tests..."
         python test.py
-
     secretEnv: ['PROJECT_ID', 'SECRET_ID']
-
-# Set the timeout for the build (optional)
-timeout: '1800s'
-
-# Use Cloud Logging
-options:
-  logging: CLOUD_LOGGING_ONLY
 
 availableSecrets:
   secretManager:
