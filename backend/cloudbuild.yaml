@@ -12,7 +12,7 @@ steps:
 
 - name: 'python:3.9'
   entrypoint: python
-  args: ['-m', 'pytest', 'tests/']
+  args: ['-m', 'pytest', 'backend/tests/']
 
 options:
   logging: CLOUD_LOGGING_ONLY
