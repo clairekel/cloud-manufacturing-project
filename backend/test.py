@@ -1,4 +1,5 @@
 import os
+import json
 import unittest
 from unittest.mock import patch, MagicMock
 from app import app
@@ -8,19 +9,26 @@ from google.oauth2 import service_account
 
 # Ensure we're in the testing environment
 os.environ['FLASK_ENV'] = 'testing'
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = r'C:\Users\clair\Downloads\cloud-based-manufacturing-32d80efcb584.json'
 
 class TestCloudManufacturing(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # Replace with your test project ID
-        credentials_path = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS')
-        if not credentials_path or not os.path.exists(credentials_path):
+        # Path to the credentials file in Cloud Build
+        credentials_path = '/tmp/firestore-credentials.json'
+        
+        if not os.path.exists(credentials_path):
             raise Exception(f"Credentials file not found at {credentials_path}")
         
-        credentials = service_account.Credentials.from_service_account_file(credentials_path)
-        cls.db = firestore.Client(credentials=credentials)
+        # Load the credentials
+        with open(credentials_path, 'r') as f:
+            creds_info = json.load(f)
+        
+        # Create credentials object
+        credentials = service_account.Credentials.from_service_account_info(creds_info)
+        
+        # Initialize Firestore client
+        cls.db = firestore.Client(credentials=credentials, project=creds_info['project_id'])
 
     def setUp(self):
         self.app = app.test_client()
