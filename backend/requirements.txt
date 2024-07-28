@@ -7,3 +7,4 @@ gunicorn
 pytest
 google-auth
 google-cloud-secret-manager
+python-dotenv
