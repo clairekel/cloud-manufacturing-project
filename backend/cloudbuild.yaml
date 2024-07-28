@@ -14,14 +14,5 @@ steps:
   entrypoint: python
   args: ['-m', 'pytest', 'tests/']
 
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/cloud-based-manufacturing/cloud-manufacturing', '.']
-
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/cloud-based-manufacturing/cloud-manufacturing']
-
-- name: 'gcr.io/cloud-builders/gcloud'
-  args: ['run', 'deploy', 'cloud-manufacturing', '--image', 'gcr.io/cloud-based-manufacturing/cloud-manufacturing', '--region', 'us-central1', '--platform', 'managed', '--allow-unauthenticated']
-
 options:
   logging: CLOUD_LOGGING_ONLY
