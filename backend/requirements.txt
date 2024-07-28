@@ -6,3 +6,4 @@ functions-framework==3.*
 gunicorn
 pytest
 google-auth
+google-cloud-secret-manager
