@@ -4,9 +4,23 @@ steps:
     args:
       - '-c'
       - |
+        echo "Project ID: $PROJECT_ID"
         cd backend
         pip install -r requirements.txt
-        pip install python-dotenv
+        pip install python-dotenv google-cloud-secret-manager
+        python -c "
+        import os
+        from google.cloud import secretmanager
+        client = secretmanager.SecretManagerServiceClient()
+        project_id = os.environ.get('PROJECT_ID')
+        print(f'Accessing secrets for project: {project_id}')
+        name = f'projects/{project_id}/secrets/project_id/versions/latest'
+        try:
+            response = client.access_secret_version(request={'name': name})
+            print('Successfully accessed secret')
+        except Exception as e:
+            print(f'Error accessing secret: {e}')
+        "
         python test.py
     secretEnv: ['PROJECT_ID', 'SECRET_ID']
 

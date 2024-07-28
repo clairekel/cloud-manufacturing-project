@@ -9,7 +9,17 @@ from google.oauth2.service_account import Credentials
 from google.cloud import secretmanager
 from dotenv import load_dotenv
 
-load_dotenv() 
+load_dotenv(override=False)
+
+print("Environment variables:")
+for key, value in os.environ.items():
+    print(f"{key}: {value}")
+
+project_id = os.environ.get('PROJECT_ID')
+secret_id = os.environ.get('SECRET_ID')
+
+print(f"PROJECT_ID: {project_id}")
+print(f"SECRET_ID: {secret_id}")
 
 def access_secret(project_id, secret_id, version_id="latest"):
     client = secretmanager.SecretManagerServiceClient()
@@ -17,12 +27,6 @@ def access_secret(project_id, secret_id, version_id="latest"):
     response = client.access_secret_version(request={"name": name})
     payload = response.payload.data.decode('UTF-8')
     return payload
-
-project_id = os.environ.get('PROJECT_ID')
-secret_id = os.environ.get('SECRET_ID')
-
-print(f"PROJECT_ID: {project_id}")
-print(f"SECRET_ID: {secret_id}")
 
 # Retrieve the secret from Secret Manager
 secret_value = access_secret(project_id, secret_id)
@@ -137,13 +141,4 @@ class TestCloudManufacturing(unittest.TestCase):
         pass
 
 if __name__ == '__main__':
-    # Load .env file if it exists (for local testing)
-    # This will not override existing environment variables
-    load_dotenv(override=False)
-
-    # Print environment variables for debugging
-    print(f"PROJECT_ID: {os.environ.get('PROJECT_ID')}")
-    print(f"SECRET_ID: {os.environ.get('SECRET_ID')}")
-
-    # Run the tests
     unittest.main()
