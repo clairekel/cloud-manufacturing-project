@@ -4,10 +4,7 @@ steps:
     args:
       - '-c'
       - |
-        export PROJECT_ID="cloud-based-manufacturing"
-        export SECRET_ID="firestore-secret"
         echo "PROJECT_ID: $PROJECT_ID"
-        echo "SECRET_ID: $SECRET_ID"
         echo "All environment variables:"
         env
         cd backend
@@ -18,7 +15,7 @@ steps:
 
 availableSecrets:
   secretManager:
-  - versionName: projects/cloud-based-manufacturing/secrets/firestore-secret/versions/latest
+  - versionName: projects/$PROJECT_ID/secrets/firestore-secret/versions/latest
     env: 'FIRESTORE_SECRET'
 
 options:
