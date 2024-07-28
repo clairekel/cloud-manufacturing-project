@@ -1,5 +1,3 @@
-region: 'us-central1'  # Change this to an available region for your project
-
 steps:
 - name: 'python:3.9'
   entrypoint: pip
