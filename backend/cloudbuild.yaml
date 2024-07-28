@@ -1,6 +1,12 @@
 steps:
 - name: 'python:3.9'
-  args: ['pip', 'install', '-r', 'backend/requirements.txt']
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    python -m venv /tmp/venv
+    . /tmp/venv/bin/activate
+    pip install -r backend/requirements.txt
 
 - name: 'python:3.9'
   entrypoint: python
