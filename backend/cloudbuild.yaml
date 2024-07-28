@@ -4,8 +4,7 @@ steps:
     args:
       - '-c'
       - |
-        echo "Project ID: $PROJECT_ID"
-        echo "CLOUD_BUILD_PROJECT_ID: $CLOUD_BUILD_PROJECT_ID"
+        echo "PROJECT_ID: $PROJECT_ID"
         echo "All environment variables:"
         env
         cd backend
@@ -13,10 +12,13 @@ steps:
         pip install python-dotenv google-cloud-secret-manager
         python -c "
         import os
+        print('Python environment variables:')
+        for key, value in os.environ.items():
+            print(f'{key}: {value}')
         from google.cloud import secretmanager
         client = secretmanager.SecretManagerServiceClient()
         project_id = os.environ.get('PROJECT_ID')
-        print(f'Accessing secrets for project: {project_id}')
+        print(f'Attempting to access secrets for project: {project_id}')
         name = f'projects/{project_id}/secrets/project_id/versions/latest'
         try:
             response = client.access_secret_version(request={'name': name})
