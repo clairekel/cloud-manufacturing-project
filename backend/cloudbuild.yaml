@@ -1,7 +1,6 @@
 steps:
 - name: 'python:3.9'
-  entrypoint: pip
-  args: ['install', '-r', 'requirements.txt']
+  args: ['pip', 'install', '-r', 'backend/requirements.txt']
 
 - name: 'python:3.9'
   entrypoint: python
