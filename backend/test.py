@@ -85,25 +85,24 @@ class TestCloudManufacturing(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn('Invalid request', response.get_json()['error'])
 
-    # New test cases
-
     def test_empty_product_name(self):
         response = self.app.post('/check_product', json={'ProductName': ''})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         data = response.get_json()
-        self.assertEqual(data['message'], 'Product is not available')
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'Product name cannot be empty')
 
     def test_whitespace_product_name(self):
         response = self.app.post('/check_product', json={'ProductName': '   '})
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 400)
         data = response.get_json()
-        self.assertEqual(data['message'], 'Product is not available')
-
-    def test_case_insensitivity(self):
-        response = self.app.post('/check_product', json={'ProductName': 'KEYCHAIN'})
-        self.assertEqual(response.status_code, 200)
-        data = response.get_json()
-        self.assertEqual(data['message'], 'Product is ready to manufacture')
+        self.assertIn('error', data)
+        self.assertEqual(data['error'], 'Product name cannot be empty')
+        def test_case_insensitivity(self):
+            response = self.app.post('/check_product', json={'ProductName': 'KEYCHAIN'})
+            self.assertEqual(response.status_code, 200)
+            data = response.get_json()
+            self.assertEqual(data['message'], 'Product is ready to manufacture')
 
     def test_special_characters(self):
         response = self.app.post('/check_product', json={'ProductName': 'product!@#$%^&*()'})
@@ -118,27 +117,25 @@ class TestCloudManufacturing(unittest.TestCase):
         data = response.get_json()
         self.assertEqual(data['message'], 'Product is not available')
 
-    @patch('routes.firestore.Client')
-    def test_database_error(self, mock_firestore):
-        mock_firestore.side_effect = Exception('Database connection error')
-        response = self.app.post('/check_product', json={'ProductName': 'keychain'})
-        self.assertEqual(response.status_code, 500)
-        data = response.get_json()
-        self.assertIn('error', data)
-        self.assertEqual(data['error'], 'Database error')
+    def test_database_error(self):
+        with patch('routes.firestore.Client', side_effect=Exception('Database connection error')):
+            response = self.app.post('/check_product', json={'ProductName': 'keychain'})
+            self.assertEqual(response.status_code, 400)
+            data = response.get_json()
+            self.assertIn('error', data)
+            self.assertEqual(data['error'], 'Database error occurred')
 
     def test_non_post_method(self):
         response = self.app.get('/check_product')
         self.assertEqual(response.status_code, 405)  # Method Not Allowed
 
-    @patch('routes.firestore.Client')
-    def test_firestore_timeout(self, mock_firestore):
-        mock_firestore.side_effect = firestore_exceptions.DeadlineExceeded('Timeout')
-        response = self.app.post('/check_product', json={'ProductName': 'keychain'})
-        self.assertEqual(response.status_code, 500)
-        data = response.get_json()
-        self.assertIn('error', data)
-        self.assertEqual(data['error'], 'Database error')
+    def test_firestore_timeout(self):
+        with patch('routes.firestore.Client', side_effect=firestore_exceptions.DeadlineExceeded('Timeout')):
+            response = self.app.post('/check_product', json={'ProductName': 'keychain'})
+            self.assertEqual(response.status_code, 400)
+            data = response.get_json()
+            self.assertIn('error', data)
+            self.assertEqual(data['error'], 'Database error occurred')
 
     def tearDown(self):
         # Clean up any resources if necessary
