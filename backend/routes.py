@@ -52,14 +52,14 @@ def _parse_json_request():
 #Extracts and validates the product name from the request JSON.
 def _extract_product_name(request_json):
     if not request_json or 'ProductName' not in request_json:
-        raise ValueError('Invalid request: Product Name is required')
+        raise ValueError('Invalid request: ProductName is required')
 
-    product_name = request_json['ProductName'].strip().lower()
+    product_name = request_json['ProductName'].strip()
     if not product_name:
-        raise ValueError('Product name cannot be empty')
+        return ''  # Return empty string for blank product name
     
     logger.debug(f"Product name: {product_name}")
-    return product_name
+    return product_name.lower()
 
 #Checks the availability of the product in Firestore.
 def _check_product_availability(product_name):

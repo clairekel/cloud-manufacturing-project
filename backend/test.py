@@ -55,18 +55,18 @@ class TestCloudManufacturing(unittest.TestCase):
     def test_empty_product_name(self):
         """Test response for empty product name."""
         response = self.app.post('/check_product', json={'ProductName': ''})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         data = response.get_json()
-        self.assertIn('error', data)
-        self.assertEqual(data['error'], 'Product name cannot be empty')
+        self.assertIn('message', data)
+        self.assertEqual(data['message'], 'You left the product field blank. Please try enter the product again.')
 
     def test_whitespace_product_name(self):
         """Test response for whitespace-only product name."""
         response = self.app.post('/check_product', json={'ProductName': '   '})
-        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.status_code, 200)
         data = response.get_json()
-        self.assertIn('error', data)
-        self.assertEqual(data['error'], 'Product name cannot be empty')
+        self.assertIn('message', data)
+        self.assertEqual(data['message'], 'You left the product field blank. Please try enter the product again.')
 
     def test_special_characters(self):
         """Test handling of special characters in product name."""
